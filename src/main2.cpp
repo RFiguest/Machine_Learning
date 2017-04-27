@@ -2,7 +2,6 @@
 #include "mnist.h"
 #include<limits.h>
 
-
 float dist(float* v1, float* v2){
 	float d=0;
 	for(int i=0; i<784; i++){
@@ -23,12 +22,9 @@ int linear_classifier(float *w, float *x){
 	}
 }
 
-
-
-
-
 int main()
 {
+
 
     float** images = read_mnist("train-images.idx3-ubyte");
 	float* labels = read_labels("train-labels.idx1-ubyte");
@@ -36,81 +32,7 @@ int main()
 	float* test_labels = read_labels("t10k-labels.idx1-ubyte");
 	float err=0;
 	float *w = new float[784];
-
-
-	//Partie KMEANS
-
-		// 1)Init
-
-	const int  K=10;
-	float A [K][784];
-	float B [K][784];
-	int* n = new int [K];
-	
-
-	for (int i=0; i<K; i++){
-		for (int j=0; j<784; j++){
-			A[i][j]= (float)rand()*2/INT_MAX-1;
-			B[i][j]=0;
-		}
-	}	
-
-		// 2) Main loop
-	
-	for (int t=0; t<1000; t++){
-	
-			// step 1
-
-		for (int i=0; i<K; i++){
-			n[i]=0;
-			for (int j=0; j<784; j++){
-				B[i][j]=0;
-			}
-		}
-	
-
-			//step 2
-
-		for (int i=0; i<60000; i++){
-				printf ("t=%d, i=%u \n", t, i);
-			float mind = -1; int gagnant =0;
-			for (int k=0; k<K; k++){
-				float d = dist(A[k], images [i]);
-				if (d<= mind || mind == -1){
-					mind = d; gagnant= k;
-				}
-			}
-
-			//Accumulation des images dans les barycentres de leur cellules gagnantes
-			for (int j=0; j<784; j++){
-				B[gagnant][j] += images [i][j];
-				n[gagnant] ++;
-			}	
-		}
 		
-
-			//step3
-
-		for (int k=0; k<K; k++){
-			for (int j=0; j<784; j++){
-				A[k][j] = B[k][j]/n[k];
-			}
-		}for (int k=0; k<K; k++){
-			save_jpg( A[k], 28, 28, "%u/%u.jpg", k, t);
-		}
-	}		
-		
-	
-
-
-
-
-
-
-
-
-
-
 	//STEP 1: INITIALISATION	
 	for(int i =0; i<784;i++){
 		w[i]=(float)rand()*2/INT_MAX-1;
@@ -119,7 +41,7 @@ int main()
     
 
 	//STEP 2: LEARNING	
-	for (int i=0; i<100; i+=3) {
+	for (int i=0; i<60000; i++) {
 		int prediction = linear_classifier(w, images [i]);
 	int verite = (labels[i] == 1) ? 1 : -1;
 	if (verite != prediction) {
